@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name                Bilibili_Anime4K
-// @name:zh-CN          Bilibili Anime4K滤镜
+// @name:zh-CN          Bilibili Anime4K??
 // @description         Bring Anime4K to Bilibili and ACFun's HTML5 player to clearify 2D anime.
-// @description:zh-CN   通过Anime4K滤镜让Bilibili和ACFun上的2D番剧更加清晰
+// @description:zh-CN   ??Anime4K???Bilibili?ACFun??2D??????
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
@@ -51,7 +51,7 @@ function createProgram(gl, vertexSource, fragmentSource) {
         throw new Error(gl.getProgramInfoLog(program));
     }
 
-    var wrapper = {program: program};
+    var wrapper = { program: program };
 
     var numAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < numAttributes; i++) {
@@ -788,9 +788,9 @@ function Scaler(gl) {
     this.postKernelTexture2 = null;
 
     this.scale = 1.0;
-    this.screenRatio = window.screen.width / window.screen.height;
-    this.playerRatio = 16 / 9 // Assuming default player ratio is 16:9 (this is true for Bilibili and ACFun).
-    this.isLoggedPaused = true;
+    this.screenRatio = window.screen.width/window.screen.height;
+    this.playerRatio = 16/9 // Assuming default player ratio is 16:9 (this is true for Bilibili and ACFun).
+    this.isLoggedPaused = false;
     this.isFullscreen = true;   // Setting this to true to resize the board on start.
     console.log("Default screen aspect ratio is set to " + this.screenRatio)
 }
@@ -835,21 +835,21 @@ Scaler.prototype.resize = function (scale) {
     this.postKernelTexture2 = createTexture(gl, gl.LINEAR, emptyPixels, width, height);
 }
 
-Scaler.prototype.resizeBoard = function (originRatio, newRatio) {
-    if (Math.abs(originRatio - newRatio) > 0.001) {    // To prevent precision-caused problem.
+Scaler.prototype.resizeBoard = function(originRatio, newRatio){
+    if (Math.abs(originRatio-newRatio) > 0.001){    // To prevent precision-caused problem.
         console.log("Video ratio mismatched!")
         console.log("Video Ratio: " + originRatio)
         console.log("Screen ratio: " + newRatio)
-        if (originRatio > newRatio) {   // Not-so-wide screen, change height.
-            let newHeight = newRatio / originRatio * 100
+        if(originRatio>newRatio){   // Not-so-wide screen, change height.
+            let newHeight = newRatio/originRatio*100
             console.log("Setting new height precentage: " + newHeight + "%")
             globalBoard.style.height = newHeight + "%"
-            globalBoard.style.marginTop = (100 - newHeight) / 3 + "%"
+            globalBoard.style.marginTop = (100-newHeight)/3 + "%"
         } else {    // Wide screen, change width.
-            let newWidth = originRatio / newRatio * 100
+            let newWidth = originRatio/newRatio*100
             console.log("Setting new width precentage: " + newWidth + "%")
             globalBoard.style.width = newWidth + "%"
-            globalBoard.style.marginLeft = (100 - newWidth) / 2 + "%"
+            globalBoard.style.marginLeft = (100-newWidth)/2 + "%"
         }
     }
 }
@@ -880,15 +880,15 @@ Scaler.prototype.render = async function () {
         this.inputVideo(newMov)
     }
 
-    let videoRatio = this.inputMov.videoWidth / this.inputMov.videoHeight
-    if (document.fullscreenElement != null) {  // To prevent float precision caused problem.
-        if (!this.isFullscreen) {
+    let videoRatio = this.inputMov.videoWidth/this.inputMov.videoHeight
+    if (document.fullscreenElement!=null) {  // To prevent float precision caused problem.
+        if(!this.isFullscreen){
             console.log("Fullscreen detected.")
             this.resizeBoard(videoRatio, this.screenRatio)
             this.isFullscreen = true
         }
     } else {
-        if (this.isFullscreen) {
+        if(this.isFullscreen){
             console.log("Fullscreen deactivated.")
             // Reset all style.
             globalBoard.style.width = "100%"
@@ -902,25 +902,25 @@ Scaler.prototype.render = async function () {
     }
 
     // Check if video is paused.
-    if (this.inputMov.paused) {
+    if (this.inputMov.paused){
         // If paused we stop rendering new frames.
-        if (!this.isLoggedPaused) {
+        if(!this.isLoggedPaused){
             console.log("Video paused.")
             this.isLoggedPaused = true
         }
 
         //todo maybe check
-        // return
+       // return
     }
 
-    if (!this.inputMov.paused) {
+    if (!this.inputMov.paused){
         // Else we continue rendering new frames.
-        if (this.isLoggedPaused) {
+        if(this.isLoggedPaused){
             console.log("Video continued.")
             this.isLoggedPaused = false
-            if (window.location.href.includes("youtube")) {
-                document.querySelector("#movie_player > div.html5-video-container > video").style.display = "none"
-            }
+                    if(window.location.href.includes("youtube")){
+    document.querySelector("#movie_player > div.html5-video-container > video").style.display="none"
+        }
         }
     }
 
@@ -931,7 +931,7 @@ Scaler.prototype.render = async function () {
     // Automatic change scale according to original video resolution.
     // Upscaled to 1440p.
     let newScale = 1440 / this.inputMov.videoHeight;
-    if (this.scale != newScale) {
+    if (this.scale != newScale){
         this.scale = newScale;
         console.log('Setting scale to ' + this.scale);
     }
@@ -1135,12 +1135,12 @@ let globalScaler = null;
 let globalMovOrig = null;
 let globalBoard = null;
 let globalScale = 2.0;
-let globalCurrentHref = window.location.href
+let globalCurrentHref=window.location.href
 
 let globalUpdateId, globalPreviousDelta = 0;
 let globalFpsLimit = 30;    // Limit fps to 30 fps. Change here if you want more frames to be rendered. (But usually 30 fps is pretty enough for most anime as they are mostly done on threes.)
 
-function getScreenRefreshRate(callback, runIndefinitely = false) {
+function getScreenRefreshRate(callback, runIndefinitely = false){
     let requestId = null;
     let callbackTriggered = false;
     runIndefinitely = runIndefinitely || false;
@@ -1148,35 +1148,35 @@ function getScreenRefreshRate(callback, runIndefinitely = false) {
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
     }
-
+    
     let DOMHighResTimeStampCollection = [];
 
-    let triggerAnimation = function (DOMHighResTimeStamp) {
+    let triggerAnimation = function(DOMHighResTimeStamp){
         DOMHighResTimeStampCollection.unshift(DOMHighResTimeStamp);
-
+        
         if (DOMHighResTimeStampCollection.length > 10) {
             let t0 = DOMHighResTimeStampCollection.pop();
             let fps = Math.floor(1000 * 10 / (DOMHighResTimeStamp - t0));
 
-            if (!callbackTriggered) {
+            if(!callbackTriggered){
                 callback.call(undefined, fps, DOMHighResTimeStampCollection);
             }
 
-            if (runIndefinitely) {
+            if(runIndefinitely){
                 callbackTriggered = false;
-            } else {
+            }else{
                 callbackTriggered = true;
             }
         }
-
+    
         requestId = window.requestAnimationFrame(triggerAnimation);
     };
-
+    
     window.requestAnimationFrame(triggerAnimation);
 
     // Stop after half second if it shouldn't run indefinitely
-    if (!runIndefinitely) {
-        window.setTimeout(function () {
+    if(!runIndefinitely){
+        window.setTimeout(function(){
             window.cancelAnimationFrame(requestId);
             requestId = null;
         }, 500);
@@ -1190,13 +1190,13 @@ async function injectCanvas() {
     globalMovOrig = await getVideoTag()
 
     let div = globalMovOrig.parentElement
-    while (div.className != "bilibili-player-video" && div.className != "html5-video-container") {
+    while(div.className!="bilibili-player-video"&&div.className!="html5-video-container") {
         await new Promise(r => setTimeout(r, 500));
     }
     div = globalMovOrig.parentElement
     div.style.backgroundColor = "black" // Patch for ACFun.
 
-    if (!globalBoard) {
+    if (!globalBoard){
         console.log("globalBoard not exists. Creating new one.")
 
         globalBoard = document.createElement('canvas');
@@ -1216,14 +1216,14 @@ async function injectCanvas() {
 }
 
 async function getVideoTag() {
-    while (document.getElementsByTagName("video").length <= 0) {
+    while(document.getElementsByTagName("video").length <= 0) {
         await new Promise(r => setTimeout(r, 500));
     }
-
-    globalMovOrig = document.getElementsByTagName("video")[0]
-
+    
+    globalMovOrig=document.getElementsByTagName("video")[0]
+    
     globalMovOrig.addEventListener('loadedmetadata', function () {
-        globalScaler = !globalScaler ? new Scaler(globalBoard.getContext('webgl')) : globalScaler;
+        globalScaler = !globalScaler?new Scaler(globalBoard.getContext('webgl')):globalScaler;
         globalScaler.inputVideo(globalMovOrig);
         globalScaler.resize(globalScale);
         globalScaler.scale = globalScale;
@@ -1242,9 +1242,9 @@ async function doFilter() {
     console.log('Enabling filter...')
 
     // Auto detect refresh rate.
-    getScreenRefreshRate(function (screenRefreshRate) {
-        globalFpsLimit = Math.floor((screenRefreshRate + 1) / 2);
-        globalFpsLimit = globalFpsLimit < 30 ? 30 : globalFpsLimit;   // If refresh rate is below 30 fps we round it up to 30.
+    getScreenRefreshRate(function(screenRefreshRate){
+        globalFpsLimit = Math.floor((screenRefreshRate+1) / 2);
+        globalFpsLimit = globalFpsLimit<30?30:globalFpsLimit;   // If refresh rate is below 30 fps we round it up to 30.
         console.log("Framerate limit is set to " + globalFpsLimit + " FPS.");
     });
 
@@ -1254,7 +1254,7 @@ async function doFilter() {
         globalUpdateId = requestAnimationFrame(render);
         let delta = currentDelta - globalPreviousDelta;
 
-        if (globalFpsLimit && delta < 1000 / globalFpsLimit) {
+        if (globalFpsLimit && delta < 1000/globalFpsLimit){
             return;
         }
 
@@ -1262,10 +1262,10 @@ async function doFilter() {
             globalScaler.render();
         }
 
-        if (globalCurrentHref != window.location.href) {
+        if (globalCurrentHref!=window.location.href){
             console.log("Page changed!")
             await injectCanvas()
-            globalCurrentHref = window.location.href
+            globalCurrentHref=window.location.href
         }
 
         globalPreviousDelta = currentDelta
