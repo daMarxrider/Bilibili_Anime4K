@@ -1,5 +1,5 @@
 # Bilibili_Anime4K_Experimental
-Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/) and [ACFun](https://www.acfun.cn/)!
+Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/), [ACFun](https://www.acfun.cn/) and [Youtube](https://youtube.com/) !
 
 [[中文README]](README_zh.md)
 
